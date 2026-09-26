@@ -564,6 +564,12 @@ requires-dist = [
 name = "tandem-core"
 version = "0.1.0"
 source = { editable = "packages/core" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pydantic" }]
 
 [[package]]
 name = "tandem-runner"

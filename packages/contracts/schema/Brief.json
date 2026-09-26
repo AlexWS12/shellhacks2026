@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "cited_fields": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "dominion_position": {
+      "type": "string"
+    },
+    "georgia_position": {
+      "type": "string"
+    },
+    "mediator_summary": {
+      "type": "string"
+    },
+    "shareable": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "source": {
+      "enum": [
+        "llm",
+        "template"
+      ],
+      "type": "string"
+    }
+  },
+  "required": [
+    "dominion_position",
+    "georgia_position",
+    "mediator_summary",
+    "shareable",
+    "cited_fields",
+    "source"
+  ],
+  "title": "Brief",
+  "type": "object"
+}

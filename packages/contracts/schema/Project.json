@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "Endpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Location"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "raw_name": {
+          "type": "string"
+        },
+        "unlocated_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "raw_name",
+        "name",
+        "location",
+        "unlocated_reason"
+      ],
+      "title": "Endpoint",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "enum": [
+            "verified",
+            "high",
+            "town",
+            "low"
+          ],
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        },
+        "method": {
+          "enum": [
+            "sponsor",
+            "overpass",
+            "nominatim",
+            "town",
+            "agent"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "method",
+        "confidence",
+        "evidence"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "page",
+        "locator",
+        "stage"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "build_start": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "center": {
+      "anyOf": [
+        {
+          "items": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "enum": [
+            "verified",
+            "high",
+            "town",
+            "low"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cost_by_year": {
+      "anyOf": [
+        {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cost_total": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "endpoints": {
+      "items": {
+        "$ref": "#/$defs/Endpoint"
+      },
+      "type": "array"
+    },
+    "id": {
+      "type": "string"
+    },
+    "in_service": {
+      "format": "date",
+      "type": "string"
+    },
+    "length_mi": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "partial_location": {
+      "type": "boolean"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "sponsor": {
+      "type": "string"
+    },
+    "status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "utility": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "utility",
+    "sponsor",
+    "name",
+    "description",
+    "status",
+    "in_service",
+    "build_start",
+    "cost_total",
+    "cost_by_year",
+    "length_mi",
+    "endpoints",
+    "center",
+    "confidence",
+    "partial_location",
+    "provenance"
+  ],
+  "title": "Project",
+  "type": "object"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@tandem/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./ts/*": "./ts/*.ts"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^16"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "$defs": {
+    "CostAssumption": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "source",
+        "url"
+      ],
+      "title": "CostAssumption",
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "assumptions": {
+      "items": {
+        "$ref": "#/$defs/CostAssumption"
+      },
+      "type": "array"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "high": {
+      "type": "integer"
+    },
+    "low": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "low",
+    "high",
+    "currency",
+    "assumptions"
+  ],
+  "title": "CostEstimate",
+  "type": "object"
+}

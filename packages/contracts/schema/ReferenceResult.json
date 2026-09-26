@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "actual_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "actual_mi": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "expected_days": {
+      "type": "integer"
+    },
+    "expected_mi": {
+      "type": "number"
+    },
+    "pair": {
+      "items": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "passed": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "pair",
+    "expected_mi",
+    "actual_mi",
+    "expected_days",
+    "actual_days",
+    "passed"
+  ],
+  "title": "ReferenceResult",
+  "type": "object"
+}

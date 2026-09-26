@@ -1,5 +1,6 @@
 packages:
   - apps/*
+  - packages/contracts
 
 allowBuilds:
   sharp: false

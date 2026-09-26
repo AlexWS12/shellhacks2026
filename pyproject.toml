@@ -31,7 +31,8 @@ known-first-party = ["tandem_core", "tandem_runner", "tandem_api"]
 [tool.mypy]
 python_version = "3.14"
 strict = true
-files = ["packages/core", "services/runner", "services/api"]
+plugins = ["pydantic.mypy"]
+files = ["packages/core", "services/runner", "services/api", "scripts"]
 exclude = ["/build/"]
 
 [tool.pytest.ini_options]

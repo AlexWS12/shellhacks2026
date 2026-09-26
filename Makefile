@@ -23,7 +23,8 @@ lint:
 	pnpm -r typecheck
 
 types:
-	@echo "TODO: export JSON Schema from tandem_core models and generate TypeScript into packages/contracts/ts"
+	uv run python scripts/export_schema.py
+	./scripts/gen_types.sh
 
 record:
 	@echo "TODO: record a run's event log into data/runs/"

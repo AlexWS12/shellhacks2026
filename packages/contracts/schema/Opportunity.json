@@ -1,0 +1,214 @@
+{
+  "$defs": {
+    "Brief": {
+      "additionalProperties": false,
+      "properties": {
+        "cited_fields": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "dominion_position": {
+          "type": "string"
+        },
+        "georgia_position": {
+          "type": "string"
+        },
+        "mediator_summary": {
+          "type": "string"
+        },
+        "shareable": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "source": {
+          "enum": [
+            "llm",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "dominion_position",
+        "georgia_position",
+        "mediator_summary",
+        "shareable",
+        "cited_fields",
+        "source"
+      ],
+      "title": "Brief",
+      "type": "object"
+    },
+    "CostAssumption": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "source",
+        "url"
+      ],
+      "title": "CostAssumption",
+      "type": "object"
+    },
+    "CostEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "items": {
+            "$ref": "#/$defs/CostAssumption"
+          },
+          "type": "array"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "high": {
+          "type": "integer"
+        },
+        "low": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "currency",
+        "assumptions"
+      ],
+      "title": "CostEstimate",
+      "type": "object"
+    },
+    "Overlap": {
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        },
+        "closest_mi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "verified",
+            "high",
+            "town",
+            "low"
+          ],
+          "type": "string"
+        },
+        "distance_mi": {
+          "type": "number"
+        },
+        "gap_days": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "in_reference": {
+          "type": "boolean"
+        },
+        "windows_overlap": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "a",
+        "b",
+        "distance_mi",
+        "closest_mi",
+        "gap_days",
+        "windows_overlap",
+        "confidence",
+        "in_reference"
+      ],
+      "title": "Overlap",
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "brief": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Brief"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cost_estimate": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CostEstimate"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "overlap": {
+      "$ref": "#/$defs/Overlap"
+    },
+    "rank": {
+      "type": "integer"
+    },
+    "windows_overlap": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "overlap",
+    "rank",
+    "windows_overlap",
+    "cost_estimate",
+    "brief"
+  ],
+  "title": "Opportunity",
+  "type": "object"
+}

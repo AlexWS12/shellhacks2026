@@ -1,0 +1,672 @@
+{
+  "$defs": {
+    "Brief": {
+      "additionalProperties": false,
+      "properties": {
+        "cited_fields": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "dominion_position": {
+          "type": "string"
+        },
+        "georgia_position": {
+          "type": "string"
+        },
+        "mediator_summary": {
+          "type": "string"
+        },
+        "shareable": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "source": {
+          "enum": [
+            "llm",
+            "template"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "dominion_position",
+        "georgia_position",
+        "mediator_summary",
+        "shareable",
+        "cited_fields",
+        "source"
+      ],
+      "title": "Brief",
+      "type": "object"
+    },
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "rule_id": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warn",
+            "info"
+          ],
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "severity",
+        "subject",
+        "message",
+        "provenance"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "CostAssumption": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "value",
+        "source",
+        "url"
+      ],
+      "title": "CostAssumption",
+      "type": "object"
+    },
+    "CostEstimate": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "items": {
+            "$ref": "#/$defs/CostAssumption"
+          },
+          "type": "array"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "high": {
+          "type": "integer"
+        },
+        "low": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "currency",
+        "assumptions"
+      ],
+      "title": "CostEstimate",
+      "type": "object"
+    },
+    "Endpoint": {
+      "additionalProperties": false,
+      "properties": {
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Location"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "raw_name": {
+          "type": "string"
+        },
+        "unlocated_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "raw_name",
+        "name",
+        "location",
+        "unlocated_reason"
+      ],
+      "title": "Endpoint",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "enum": [
+            "verified",
+            "high",
+            "town",
+            "low"
+          ],
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        },
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        },
+        "method": {
+          "enum": [
+            "sponsor",
+            "overpass",
+            "nominatim",
+            "town",
+            "agent"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "method",
+        "confidence",
+        "evidence"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "Opportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "brief": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Brief"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost_estimate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CostEstimate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "overlap": {
+          "$ref": "#/$defs/Overlap"
+        },
+        "rank": {
+          "type": "integer"
+        },
+        "windows_overlap": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "overlap",
+        "rank",
+        "windows_overlap",
+        "cost_estimate",
+        "brief"
+      ],
+      "title": "Opportunity",
+      "type": "object"
+    },
+    "Overlap": {
+      "additionalProperties": false,
+      "properties": {
+        "a": {
+          "type": "string"
+        },
+        "b": {
+          "type": "string"
+        },
+        "closest_mi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "verified",
+            "high",
+            "town",
+            "low"
+          ],
+          "type": "string"
+        },
+        "distance_mi": {
+          "type": "number"
+        },
+        "gap_days": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "in_reference": {
+          "type": "boolean"
+        },
+        "windows_overlap": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "a",
+        "b",
+        "distance_mi",
+        "closest_mi",
+        "gap_days",
+        "windows_overlap",
+        "confidence",
+        "in_reference"
+      ],
+      "title": "Overlap",
+      "type": "object"
+    },
+    "Project": {
+      "additionalProperties": false,
+      "properties": {
+        "build_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "center": {
+          "anyOf": [
+            {
+              "items": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "enum": [
+                "verified",
+                "high",
+                "town",
+                "low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost_by_year": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cost_total": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "endpoints": {
+          "items": {
+            "$ref": "#/$defs/Endpoint"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "in_service": {
+          "format": "date",
+          "type": "string"
+        },
+        "length_mi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "partial_location": {
+          "type": "boolean"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "sponsor": {
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "utility": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "utility",
+        "sponsor",
+        "name",
+        "description",
+        "status",
+        "in_service",
+        "build_start",
+        "cost_total",
+        "cost_by_year",
+        "length_mi",
+        "endpoints",
+        "center",
+        "confidence",
+        "partial_location",
+        "provenance"
+      ],
+      "title": "Project",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "page",
+        "locator",
+        "stage"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ReferenceResult": {
+      "additionalProperties": false,
+      "properties": {
+        "actual_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actual_mi": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expected_days": {
+          "type": "integer"
+        },
+        "expected_mi": {
+          "type": "number"
+        },
+        "pair": {
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "passed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "pair",
+        "expected_mi",
+        "actual_mi",
+        "expected_days",
+        "actual_days",
+        "passed"
+      ],
+      "title": "ReferenceResult",
+      "type": "object"
+    },
+    "StageState": {
+      "additionalProperties": false,
+      "properties": {
+        "counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "running",
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
+        "used_fallback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "counts",
+        "used_fallback"
+      ],
+      "title": "StageState",
+      "type": "object"
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/Check"
+      },
+      "type": "array"
+    },
+    "opportunities": {
+      "items": {
+        "$ref": "#/$defs/Opportunity"
+      },
+      "type": "array"
+    },
+    "overlaps": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Overlap"
+      },
+      "type": "object"
+    },
+    "projects": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Project"
+      },
+      "type": "object"
+    },
+    "reference_results": {
+      "items": {
+        "$ref": "#/$defs/ReferenceResult"
+      },
+      "type": "array"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "stages": {
+      "additionalProperties": {
+        "$ref": "#/$defs/StageState"
+      },
+      "type": "object"
+    },
+    "status": {
+      "enum": [
+        "running",
+        "completed",
+        "failed"
+      ],
+      "type": "string"
+    },
+    "totals": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "run_id",
+    "status",
+    "stages",
+    "projects",
+    "checks",
+    "overlaps",
+    "reference_results",
+    "opportunities",
+    "totals"
+  ],
+  "title": "RunState",
+  "type": "object"
+}
