@@ -29,4 +29,4 @@ This repo's root is the plan's `tandem/` root.
 - `services/`: `runner/` is the imperative shell (reads `pipeline.yaml`, runs the DAG, executes and caches effects, appends events); `api/` is FastAPI serving runs, SSE event streams, and exports.
 - `apps/`: `web/` is the Next.js UI (live run, run view, diff) whose state is a pure reduction of events.
 - `scripts/`: schema export, TypeScript generation, run recording, and gazetteer fetch.
-- `docs/`: `architecture.md`, the plan and its decisions, kept current; `reference/` holds the locations guide, challenge brief, and artifact HTML.
+- `docs/`: `architecture.md`, the plan and its decisions, kept current; `prompts.md`, the agent prompt runbook; `reference/` holds the locations guide, challenge brief, and artifact HTML.
