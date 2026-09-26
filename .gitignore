@@ -1,6 +1,7 @@
 # env and local data
 .env
 data/*.db
+data/*.db-*
 
 # python
 .venv/

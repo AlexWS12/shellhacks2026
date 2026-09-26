@@ -9,6 +9,7 @@ import importlib
 import json
 import sqlite3
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -72,8 +73,21 @@ def open_db(path: Path | str) -> sqlite3.Connection:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
     db = sqlite3.connect(path)
     db.execute("PRAGMA foreign_keys = ON")
+    db.execute("PRAGMA busy_timeout = 5000")
+    if str(path) != ":memory:":
+        db.execute("PRAGMA journal_mode = WAL")  # readers (the API) never block the runner
     db.executescript(SCHEMA)
     return db
+
+
+@dataclass(frozen=True)
+class RunInfo:
+    run_id: str
+    status: str
+    today: str
+    config_hash: str
+    started_at: str | None  # ts of the run.started event
+    totals: dict[str, int]  # from run.completed; empty while running
 
 
 class EventLog:
@@ -115,29 +129,32 @@ class EventLog:
                 "payload": payload,
             }
         )
-        self._db.execute(
-            "INSERT INTO events (run_id, seq, type, payload_json, ts, fixture) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (
-                run_id,
-                seq,
-                event.type,
-                event.payload.model_dump_json(),
-                event.ts.isoformat(),
-                int(fixture),
-            ),
-        )
+        self._insert(event)
         self._db.commit()
         self._next_seq[run_id] = seq + 1
         for subscriber in self._subscribers:
             subscriber(event)
         return event
 
-    def events(self, run_id: str) -> list[Event]:
+    def _insert(self, event: Event) -> None:
+        self._db.execute(
+            "INSERT INTO events (run_id, seq, type, payload_json, ts, fixture) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (
+                event.run_id,
+                event.seq,
+                event.type,
+                event.payload.model_dump_json(),
+                event.ts.isoformat(),
+                int(event.fixture),
+            ),
+        )
+
+    def events(self, run_id: str, *, from_seq: int = 0) -> list[Event]:
         rows = self._db.execute(
             "SELECT run_id, seq, type, payload_json, ts, fixture FROM events "
-            "WHERE run_id = ? ORDER BY seq",
-            (run_id,),
+            "WHERE run_id = ? AND seq >= ? ORDER BY seq",
+            (run_id, from_seq),
         ).fetchall()
         return [
             EVENT.validate_python(
@@ -152,6 +169,59 @@ class EventLog:
             )
             for r in rows
         ]
+
+    def run_info(self, run_id: str) -> RunInfo | None:
+        infos = self._run_infos("WHERE r.run_id = ?", (run_id,))
+        return infos[0] if infos else None
+
+    def list_runs(self, limit: int = 50) -> list[RunInfo]:
+        return self._run_infos("ORDER BY r.rowid DESC LIMIT ?", (limit,))
+
+    def _run_infos(self, clause: str, params: tuple[object, ...]) -> list[RunInfo]:
+        rows = self._db.execute(
+            "SELECT r.run_id, r.status, r.today, r.config_hash, "
+            "  (SELECT ts FROM events WHERE run_id = r.run_id AND seq = 0), "
+            "  (SELECT payload_json FROM events "
+            "   WHERE run_id = r.run_id AND type = 'run.completed') "
+            f"FROM runs r {clause}",
+            params,
+        ).fetchall()
+        return [
+            RunInfo(
+                run_id=r[0],
+                status=r[1],
+                today=r[2],
+                config_hash=r[3],
+                started_at=r[4],
+                totals=json.loads(r[5])["totals"] if r[5] else {},
+            )
+            for r in rows
+        ]
+
+    def import_run(self, events: list[Event]) -> bool:
+        """Store a recorded run (e.g. from data/runs/) as-is. False if it already exists."""
+        first, last = events[0], events[-1]
+        if first.type != "run.started" or last.type != "run.completed":
+            raise ValueError(
+                "a recorded run must start with run.started and end with run.completed"
+            )
+        if self.run_info(first.run_id) is not None:
+            return False
+        with self._db:
+            self._db.execute(
+                "INSERT INTO runs (run_id, config_hash, today, status) VALUES (?, ?, ?, ?)",
+                (
+                    first.run_id,
+                    first.payload.config_hash,
+                    first.payload.today.isoformat(),
+                    last.payload.status,
+                ),
+            )
+            for event in events:
+                if event.run_id != first.run_id:
+                    raise ValueError("a recorded run must contain a single run_id")
+                self._insert(event)
+        return True
 
     # --- stage outputs ------------------------------------------------------------
 

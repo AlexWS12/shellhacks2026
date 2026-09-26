@@ -27,4 +27,4 @@ types:
 	./scripts/gen_types.sh
 
 record:
-	@echo "TODO: record a run's event log into data/runs/"
+	uv run python scripts/record_run.py

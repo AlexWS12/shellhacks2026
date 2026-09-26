@@ -1,7 +1,7 @@
 FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim
 WORKDIR /app
 ENV UV_LINK_MODE=copy UV_COMPILE_BYTECODE=1
-COPY pyproject.toml uv.lock .python-version ./
+COPY pyproject.toml uv.lock .python-version pipeline.yaml ./
 COPY packages/core ./packages/core
 COPY services ./services
 RUN uv sync --frozen --no-dev --package tandem-api

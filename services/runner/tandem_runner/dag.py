@@ -238,8 +238,8 @@ class Runner:
         self.executors = executors
         self.stages = plan(config, resolve=resolve, executors=executors)
 
-    def run(self) -> RunResult:
-        run_id = uuid.uuid4().hex
+    def run(self, run_id: str | None = None) -> RunResult:
+        run_id = run_id or uuid.uuid4().hex
         cfg = self.config
         input_hashes = self._hash_sources()
         self.log.start_run(run_id, cfg.config_hash, cfg.run.today.isoformat())
