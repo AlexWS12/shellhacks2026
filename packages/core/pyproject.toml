@@ -1,0 +1,14 @@
+[project]
+name = "tandem-core"
+version = "0.1.0"
+description = "Tandem pure functional core: models, parsers, geometry, validation, overlap, rank, cost."
+requires-python = ">=3.14"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.10.4,<0.11"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "tandem_core"

@@ -1,0 +1,18 @@
+[project]
+name = "tandem-api"
+version = "0.1.0"
+description = "Tandem HTTP API: runs, SSE event streams, and exports."
+requires-python = ">=3.14"
+dependencies = ["tandem-core", "tandem-runner", "fastapi", "uvicorn[standard]"]
+
+[tool.uv.sources]
+tandem-core = { workspace = true }
+tandem-runner = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.10.4,<0.11"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "tandem_api"

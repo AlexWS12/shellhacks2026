@@ -1,0 +1,39 @@
+[tool.uv.workspace]
+members = ["packages/core", "services/runner", "services/api"]
+
+[tool.uv.sources]
+tandem-core = { workspace = true }
+tandem-runner = { workspace = true }
+tandem-api = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "tandem-core",
+    "tandem-runner",
+    "tandem-api",
+    "ruff",
+    "mypy",
+    "pytest",
+    "httpx2",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+extend-exclude = ["apps", "packages/contracts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tandem_core", "tandem_runner", "tandem_api"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["packages/core", "services/runner", "services/api"]
+exclude = ["/build/"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages/core/tests", "services/runner/tests", "services/api/tests"]
+addopts = "--import-mode=importlib"
