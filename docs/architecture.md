@@ -299,7 +299,7 @@ Events are append-only, ordered by `seq` within a run, and carry the payloads ab
 | `overlap.found` | Overlap | Overlap stage |
 | `reference.tested` | ReferenceResult | Reference stage |
 | `brief.written` | overlap id, Brief | Brief agent |
-| `run.completed` | totals, output hashes | Runner |
+| `run.completed` | status (completed or failed), totals, output hashes | Runner |
 
 ## Pipeline spec
 
@@ -324,7 +324,7 @@ sources:
     path: "data/sources/2025 IRP Volume 3 PUBLIC DISCLOSURE.pdf"
     utility: GPC
     in_service_field: need_date
-  reference:
+  reference_xlsx:
     path: "data/sources/Projects_Overlaps.xlsx"
 stages:
   - id: extract_desc
@@ -342,7 +342,7 @@ stages:
   - id: load_reference
     fn: tandem_core.parse_reference.parse
     effects: [read_xlsx]
-    in: [reference]
+    in: [reference_xlsx]
     out: reference
   - id: locate
     agent: "Geocoder"
@@ -585,3 +585,4 @@ Five milestones, each ending in something demoable; parity with the artifact on 
   - `fail_run_if` replaced with a structured gate (ADR-011). LLM model moved to config (`gemini-flash-latest` alias, overridable by `GEMINI_MODEL` to pin an exact ID).
   - `POST /runs` overrides limited to paths under `data/sources/`. Replay timing defined.
   - GitHub Actions CI added. Current stable versions, pinned in lockfiles. Repo root is `tandem/`.
+  - Source `reference` renamed to `reference_xlsx`: it collided with the `reference` output of `load_reference`, making `in: [reference]` ambiguous. `run.completed` now carries `status`.

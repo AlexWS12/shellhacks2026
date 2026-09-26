@@ -184,6 +184,7 @@ class BriefWrittenPayload(Frozen):
 
 
 class RunCompletedPayload(Frozen):
+    status: Literal["completed", "failed"]
     totals: dict[str, int]
     output_hashes: dict[str, str]
 

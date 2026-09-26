@@ -3,7 +3,7 @@ name = "tandem-runner"
 version = "0.1.0"
 description = "Tandem imperative shell: reads pipeline.yaml, runs the stage DAG, executes and caches effects, appends events."
 requires-python = ">=3.14"
-dependencies = ["tandem-core"]
+dependencies = ["tandem-core", "pyyaml"]
 
 [tool.uv.sources]
 tandem-core = { workspace = true }

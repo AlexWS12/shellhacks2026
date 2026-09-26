@@ -760,6 +760,13 @@
           },
           "type": "object"
         },
+        "status": {
+          "enum": [
+            "completed",
+            "failed"
+          ],
+          "type": "string"
+        },
         "totals": {
           "additionalProperties": {
             "type": "integer"
@@ -768,6 +775,7 @@
         }
       },
       "required": [
+        "status",
         "totals",
         "output_hashes"
       ],

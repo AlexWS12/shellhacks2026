@@ -199,6 +199,7 @@ export interface RunCompletedPayload {
   output_hashes: {
     [k: string]: string;
   };
+  status: "completed" | "failed";
   totals: {
     [k: string]: number;
   };

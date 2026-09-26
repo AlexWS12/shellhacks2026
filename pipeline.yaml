@@ -1,0 +1,75 @@
+run:
+  today: 2026-09-26            # passed to pure functions; never read from the clock
+  distance_threshold_mi: 25
+  georgia_sponsors: [GPC, SAV]
+utilities: [DESC, GPC]         # valid Project.utility ids
+pairs:                         # only these utility pairs are compared; Overlap.a is the first
+  - [DESC, GPC]
+llm:
+  model: gemini-flash-latest   # alias; set GEMINI_MODEL to pin an exact model ID
+sources:
+  desc_pdf:
+    path: "data/sources/2024-2028-2million-and-above-project-descriptions.pdf"
+    utility: DESC
+    in_service_field: in_service_date
+  ga_pdf:
+    path: "data/sources/2025 IRP Volume 3 PUBLIC DISCLOSURE.pdf"
+    utility: GPC
+    in_service_field: need_date
+  reference_xlsx:
+    path: "data/sources/Projects_Overlaps.xlsx"
+stages:
+  - id: extract_desc
+    agent: "Extractor, Dominion"
+    fn: tandem_core.parse_desc.parse
+    effects: [read_pdf_text]
+    in: [desc_pdf]
+    out: projects.desc
+  - id: extract_ga
+    agent: "Extractor, Georgia"
+    fn: tandem_core.parse_georgia.parse
+    effects: [read_pdf_text]
+    in: [ga_pdf]
+    out: projects.ga
+  - id: load_reference
+    fn: tandem_core.parse_reference.parse
+    effects: [read_xlsx]
+    in: [reference_xlsx]
+    out: reference
+  - id: locate
+    agent: "Geocoder"
+    fn: tandem_core.locate.resolve
+    effects: [overpass, nominatim, llm_disambiguate]
+    in: [projects.desc, projects.ga, reference]
+    out: projects.located
+    timeout_s: 90
+    fallback: [last_recorded, town_gazetteer]
+  - id: validate
+    agent: "Validator"
+    fn: tandem_core.validate.run_all
+    in: [projects.located, reference]
+    out: checks
+  - id: overlap
+    agent: "Overlap engine"
+    fn: tandem_core.overlap.find
+    in: [projects.located]
+    out: overlaps
+  - id: reference_test
+    agent: "Reference checker"
+    fn: tandem_core.overlap.test_reference
+    in: [projects.located, reference]
+    out: reference_results
+    gate: {metric: reference.passed, equals: reference.total}   # run fails otherwise
+  - id: rank_and_cost
+    agent: "Analyst"
+    fn: tandem_core.rank.rank_with_costs
+    in: [overlaps, projects.located]
+    out: opportunities
+  - id: briefs
+    agent: "Brief writer"
+    fn: tandem_core.briefs.prompt_for
+    effects: [llm_structured]
+    in: [opportunities]
+    top_n: 5
+    timeout_s: 45
+    fallback: [last_recorded, template]
