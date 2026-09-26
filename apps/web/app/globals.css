@@ -1,0 +1,523 @@
+/* Tokens follow docs/reference/tandem-real-data.html: Dominion teal, Georgia indigo,
+   safety-yellow overlap marks. Dark values apply by system preference unless the
+   user picks a theme (data-theme on <html>). */
+:root {
+  --bg: #e6ebe9;
+  --panel: #f5f7f6;
+  --ink: #15232b;
+  --muted: #56666d;
+  --line: #c7d0cd;
+  --desc: #0e8a6a;
+  --gpc: #3553a5;
+  --zone: #e0a100;
+  --zone-ink: #7a5600;
+  --bad: #b8382d;
+  --water: #d3e1e7;
+  --radius: 6px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10181c;
+    --panel: #172228;
+    --ink: #e4ecea;
+    --muted: #93a4aa;
+    --line: #2b3a41;
+    --desc: #2fb58e;
+    --gpc: #7c95e0;
+    --zone: #e8b32a;
+    --zone-ink: #f2cf73;
+    --bad: #e4695e;
+    --water: #0c1418;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #10181c;
+  --panel: #172228;
+  --ink: #e4ecea;
+  --muted: #93a4aa;
+  --line: #2b3a41;
+  --desc: #2fb58e;
+  --gpc: #7c95e0;
+  --zone: #e8b32a;
+  --zone-ink: #f2cf73;
+  --bad: #e4695e;
+  --water: #0c1418;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 var(--font-barlow), "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+button.primary {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+
+/* Keyboard focus is always visible, including on the map canvas. */
+:focus-visible,
+.maplibregl-canvas:focus-visible {
+  outline: 2px solid var(--zone);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* --- Layout ------------------------------------------------------------------- */
+
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+.app > header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.app > header h1 {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.tag {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.conn {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.conn.error {
+  color: var(--bad);
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr) 360px;
+  min-height: 0;
+}
+
+.col {
+  overflow: auto;
+  min-height: 0;
+  padding: 14px 16px;
+  background: var(--panel);
+}
+
+.col.left {
+  border-right: 1px solid var(--line);
+}
+
+.col.right {
+  border-left: 1px solid var(--line);
+}
+
+.col h2 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.col h3 {
+  font-size: 15px;
+  margin: 14px 0 6px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0;
+}
+
+.ticker {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Pipeline panel ------------------------------------------------------------ */
+
+.stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+}
+
+.stages li {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.stages li:last-child {
+  border-bottom: 0;
+}
+
+.stages .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.stages li.running .dot {
+  background: var(--zone);
+  animation: pulse 0.8s infinite alternate;
+}
+
+.stages li.completed .dot {
+  background: var(--desc);
+}
+
+.stages li.failed .dot {
+  background: var(--bad);
+}
+
+.stages .detail {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.stages .state {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stages li.completed .state {
+  color: var(--desc);
+}
+
+.stages .fallback {
+  color: var(--zone-ink);
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stages li.running .dot {
+    animation: none;
+  }
+}
+
+.chk {
+  border-left: 3px solid var(--line);
+  padding: 3px 0 3px 8px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+}
+
+.chk b {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.chk span {
+  color: var(--muted);
+  display: block;
+}
+
+.chk.error {
+  border-color: var(--bad);
+}
+
+.chk.warn {
+  border-color: var(--zone);
+}
+
+.chk.info {
+  border-color: var(--gpc);
+}
+
+table.reft {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+table.reft th {
+  font-weight: 500;
+  color: var(--muted);
+  text-align: left;
+  padding: 2px 0;
+}
+
+table.reft td {
+  padding: 3px 0;
+  border-top: 1px solid var(--line);
+}
+
+.pass {
+  color: var(--desc);
+  font-weight: 600;
+}
+
+.fail {
+  color: var(--bad);
+  font-weight: 600;
+}
+
+/* --- Map -------------------------------------------------------------------------- */
+
+.mapwrap {
+  position: relative;
+  min-height: 0;
+  background: var(--water);
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+}
+
+.mapctl {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  gap: 6px;
+}
+
+.mapctl button {
+  background: var(--panel);
+  font-size: 13px;
+  padding: 4px 10px;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.overlay .card {
+  pointer-events: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  max-width: 380px;
+}
+
+.overlay h2 {
+  font-size: 24px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.overlay p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.overlay .actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- Opportunities ------------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0 0 10px;
+}
+
+.stats div {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stats b {
+  display: block;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 22px;
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.opps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.opp {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px;
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.opp .rk {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.opp .t {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.pair {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 4px;
+  font-size: 12.5px;
+}
+
+.pair span {
+  border-left: 3px solid;
+  padding-left: 6px;
+}
+
+.pair .desc {
+  border-color: var(--desc);
+}
+
+.pair .gpc {
+  border-color: var(--gpc);
+}
+
+.pill {
+  display: inline-block;
+  font-size: 11.5px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  border: 1px solid var(--zone);
+  color: var(--zone-ink);
+  margin-right: 4px;
+}
+
+.pill.time {
+  border-color: var(--desc);
+  color: var(--desc);
+}
+
+.pill.brief {
+  border-color: var(--muted);
+  color: var(--muted);
+}
+
+@media (max-width: 1000px) {
+  .app {
+    height: auto;
+  }
+
+  .main {
+    grid-template-columns: 1fr;
+    grid-template-rows: 62vh auto auto;
+  }
+
+  .mapwrap {
+    order: 1;
+  }
+
+  .col.left {
+    order: 2;
+    border-right: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .col.right {
+    order: 3;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .col {
+    overflow: visible;
+  }
+}

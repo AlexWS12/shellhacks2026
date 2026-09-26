@@ -1,0 +1,187 @@
+{
+  "checks": [],
+  "opportunities": [
+    {
+      "brief": {
+        "cited_fields": [],
+        "dominion_position": "Stub brief: no LLM was called.",
+        "georgia_position": "Stub brief: no LLM was called.",
+        "mediator_summary": "Stub brief: no LLM was called.",
+        "shareable": [],
+        "source": "llm"
+      },
+      "cost_estimate": null,
+      "overlap": {
+        "a": "DESC_3",
+        "b": "GPC_2",
+        "closest_mi": null,
+        "confidence": "verified",
+        "distance_mi": 5.65,
+        "gap_days": 152,
+        "id": "DESC_3~GPC_2",
+        "in_reference": true,
+        "windows_overlap": false
+      },
+      "rank": 1,
+      "windows_overlap": false
+    }
+  ],
+  "overlaps": {
+    "DESC_3~GPC_2": {
+      "a": "DESC_3",
+      "b": "GPC_2",
+      "closest_mi": null,
+      "confidence": "verified",
+      "distance_mi": 5.65,
+      "gap_days": 152,
+      "id": "DESC_3~GPC_2",
+      "in_reference": true,
+      "windows_overlap": false
+    }
+  },
+  "projects": {
+    "DESC_3": {
+      "build_start": null,
+      "center": [
+        32.346439,
+        -81.0785475
+      ],
+      "confidence": "verified",
+      "cost_by_year": null,
+      "cost_total": null,
+      "description": "",
+      "endpoints": [],
+      "id": "DESC_3",
+      "in_service": "2025-12-31",
+      "length_mi": null,
+      "name": "Jasper - Okatie 230 kV #2: Construct",
+      "partial_location": false,
+      "provenance": {
+        "file": "Projects_Overlaps.xlsx",
+        "locator": "sponsor sample DESC_3",
+        "page": null,
+        "stage": "fixture"
+      },
+      "sponsor": "DESC",
+      "status": null,
+      "utility": "DESC"
+    },
+    "GPC_2": {
+      "build_start": null,
+      "center": [
+        32.352116,
+        -81.175112
+      ],
+      "confidence": "verified",
+      "cost_by_year": null,
+      "cost_total": null,
+      "description": "",
+      "endpoints": [],
+      "id": "GPC_2",
+      "in_service": "2026-06-01",
+      "length_mi": null,
+      "name": "SAV: MCINTOSH - PURRYSBURG 230KV REACTORS",
+      "partial_location": false,
+      "provenance": {
+        "file": "Projects_Overlaps.xlsx",
+        "locator": "sponsor sample GPC_2",
+        "page": null,
+        "stage": "fixture"
+      },
+      "sponsor": "SAV",
+      "status": null,
+      "utility": "GPC"
+    }
+  },
+  "reference_results": [
+    {
+      "actual_days": 152,
+      "actual_mi": 5.65,
+      "expected_days": 152,
+      "expected_mi": 5.65,
+      "pair": [
+        "DESC_3",
+        "GPC_2"
+      ],
+      "passed": true
+    }
+  ],
+  "run_id": "bb5adebdf6da4c09a0b6270815a5d75d",
+  "stages": {
+    "briefs": {
+      "counts": {
+        "briefs": 1
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "extract_desc": {
+      "counts": {
+        "projects": 1
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "extract_ga": {
+      "counts": {
+        "projects": 1
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "load_reference": {
+      "counts": {
+        "overlaps": 1,
+        "projects": 2
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "locate": {
+      "counts": {
+        "projects": 2
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "overlap": {
+      "counts": {
+        "overlaps": 1
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "rank_and_cost": {
+      "counts": {
+        "opportunities": 1
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "reference_test": {
+      "counts": {
+        "reference.passed": 1,
+        "reference.total": 1
+      },
+      "status": "completed",
+      "used_fallback": null
+    },
+    "validate": {
+      "counts": {
+        "checks": 0
+      },
+      "status": "completed",
+      "used_fallback": null
+    }
+  },
+  "status": "completed",
+  "totals": {
+    "brief.written": 1,
+    "overlap.found": 1,
+    "record.extracted": 2,
+    "reference.tested": 1,
+    "run.started": 1,
+    "stage.completed": 9,
+    "stage.started": 9
+  }
+}

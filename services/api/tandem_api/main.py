@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Annotated, Any
 
 from fastapi import FastAPI, Header, HTTPException, Query, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.sse import EventSourceResponse, format_sse_event
 from pydantic import BaseModel, ConfigDict
 
@@ -45,11 +46,13 @@ class RunSummary(BaseModel):
     today: str
     started_at: str | None
     totals: dict[str, int]
+    recorded: bool  # loaded from data/runs/ (the demo fallback), not run by this server
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     pending: set[str] = set()  # accepted by POST /runs, not yet in the database
+    recorded: set[str] = set()  # run ids found in settings.runs_dir
     pending_lock = threading.Lock()
 
     @contextmanager
@@ -64,12 +67,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         with connect() as events:
             for path in sorted(settings.runs_dir.glob("*.jsonl")):
-                recorded = [EVENT.validate_json(line) for line in _lines(path)]
-                if recorded and events.import_run(recorded):
-                    log.info("imported recorded run %s from %s", recorded[0].run_id, path.name)
+                run = [EVENT.validate_json(line) for line in _lines(path)]
+                if not run:
+                    continue
+                recorded.add(run[0].run_id)
+                if events.import_run(run):
+                    log.info("imported recorded run %s from %s", run[0].run_id, path.name)
         yield
 
     app = FastAPI(title="Tandem API", lifespan=lifespan)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=list(settings.cors_origins),
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type", "Last-Event-ID"],
+    )
 
     @app.get("/health")
     def health() -> dict[str, str]:
@@ -104,6 +116,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     today=r.today,
                     started_at=r.started_at,
                     totals=r.totals,
+                    recorded=r.run_id in recorded,
                 )
                 for r in events.list_runs(limit)
             ]

@@ -25,6 +25,8 @@ lint:
 types:
 	uv run python scripts/export_schema.py
 	./scripts/gen_types.sh
+	uv run python scripts/export_reducer_fixtures.py
 
 record:
 	uv run python scripts/record_run.py
+	uv run python scripts/export_reducer_fixtures.py

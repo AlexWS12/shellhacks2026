@@ -14,6 +14,7 @@ class Settings:
     heartbeat_s: float = 15.0  # idle time before a keep-alive comment
     replay_max_gap_s: float = 2.0
     sleep: Callable[[float], Awaitable[None]] = field(default=asyncio.sleep)
+    cors_origins: tuple[str, ...] = ("http://localhost:3000", "http://127.0.0.1:3000")
 
     @property
     def root(self) -> Path:
@@ -33,4 +34,12 @@ class Settings:
             config_path=Path(os.environ.get("TANDEM_PIPELINE") or "pipeline.yaml").resolve(),
             db_path=Path(os.environ.get("TANDEM_DB") or "data/tandem.db").resolve(),
             runs_dir=Path(os.environ.get("TANDEM_RUNS_DIR") or "data/runs").resolve(),
+            cors_origins=tuple(
+                o.strip()
+                for o in (
+                    os.environ.get("TANDEM_CORS_ORIGINS")
+                    or "http://localhost:3000,http://127.0.0.1:3000"
+                ).split(",")
+                if o.strip()
+            ),
         )

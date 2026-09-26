@@ -134,7 +134,15 @@ def test_list_runs_includes_recorded_and_new_runs(client: TestClient) -> None:
     assert runs[0]["run_id"] == run_id
     assert runs[0]["status"] == "completed"
     assert runs[0]["totals"]["stage.completed"] == 9
-    assert recorded_ids <= {r["run_id"] for r in runs}
+    assert recorded_ids == {r["run_id"] for r in runs if r["recorded"]}
+    assert runs[0]["recorded"] is False
+
+
+def test_cors_allows_the_web_app(client: TestClient) -> None:
+    response = client.get("/runs", headers={"Origin": "http://localhost:3000"})
+    assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+    blocked = client.get("/runs", headers={"Origin": "http://evil.example"})
+    assert "access-control-allow-origin" not in blocked.headers
 
 
 def test_run_overrides(client: TestClient) -> None:
